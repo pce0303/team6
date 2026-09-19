@@ -1,5 +1,3 @@
-> **그날 커뮤니티 개발 브랜치:** 로컬 실행, 시연 계정, API와 배포 절차는 [커뮤니티 안내](docs/community.md)를 참고하세요.
-
 # SKKU 2026 team6 — Channel App
 
 **SKKU 2026 team6** · [이 팀의 리소스와 준비 상태](TEAM.md)

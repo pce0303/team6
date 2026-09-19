@@ -6,7 +6,7 @@ permissions:
 on:
   pull_request:
   push:
-    branches: [main, main2]
+    branches: [main]
 
 jobs:
   test:

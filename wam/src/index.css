@@ -1,57 +1,20 @@
-* {
-  box-sizing: border-box;
+html {
+  width: 100%;
+  height: 100%;
 }
-:root {
-  font-family:
-    'Pretendard',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Apple SD Gothic Neo',
-    'Noto Sans KR',
-    sans-serif;
-  color: #302d29;
-  background: #f7f5ef;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-}
+
 body {
   margin: 0;
-  min-width: 300px;
+  padding: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  -webkit-tap-highlight-color: transparent;
 }
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-button {
-  cursor: pointer;
-}
-button:disabled {
-  cursor: wait;
-  opacity: 0.55;
-}
-button:focus-visible,
-a:focus-visible {
-  outline: 3px solid #bf541f;
-  outline-offset: 3px;
-}
-input:focus,
-textarea:focus,
-select:focus {
-  outline: 2px solid #e88454;
-  outline-offset: 1px;
-}
-button {
-  color: inherit;
-}
-svg {
-  flex-shrink: 0;
-}
-h1,
-h2,
-h3,
-p {
-  margin-top: 0;
+
+:root {
+  font-family: Inter, sans-serif;
 }
