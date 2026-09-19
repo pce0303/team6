@@ -5,8 +5,8 @@
   --surface: #ffffff;
   --canvas: #f5f7fb;
   --primary: #3f7d6c;
---primary-strong: #2f6658;
---primary-soft: #eaf5f1;
+  --primary-strong: #2f6658;
+  --primary-soft: #eaf5f1;
   --mint: #397565;
   font-family:
     system-ui,

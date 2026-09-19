@@ -1,9 +1,6 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react'
 import { useCallFunction } from '@channel.io/app-sdk-wam'
-import {
-  TUTORIAL_FUNCTIONS,
-  type SendAsBotInput,
-} from '@tutorial/shared'
+import { TUTORIAL_FUNCTIONS, type SendAsBotInput } from '@tutorial/shared'
 import { useTutorialWamData } from './hooks/useTutorialWamData'
 
 type Tab = '오늘' | '약속' | '마이'
@@ -42,7 +39,6 @@ type ActivitiesResponse = {
 }
 
 function App() {
-
   const { data: wamData } = useTutorialWamData()
 
   const { call: sendAsBot } = useCallFunction<void>({
@@ -51,11 +47,7 @@ function App() {
   })
 
   async function sendChannelBotMessage(plainText: string) {
-    if (
-      !wamData ||
-      wamData.chatType !== 'group' ||
-      !wamData.targetToken
-    ) {
+    if (!wamData || wamData.chatType !== 'group' || !wamData.targetToken) {
       return
     }
 
@@ -66,12 +58,12 @@ function App() {
       plainText,
     }
 
-  try {
-    await sendAsBot(input)
-  } catch {
-    // 봇 메시지 실패 때문에 기존 서비스 기능까지 실패시키지 않는다.
+    try {
+      await sendAsBot(input)
+    } catch {
+      // 봇 메시지 실패 때문에 기존 서비스 기능까지 실패시키지 않는다.
+    }
   }
-}
   const [tab, setTab] = useState<Tab>('오늘')
   const [classes, setClasses] = useState<ClassInfo[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
@@ -282,9 +274,9 @@ function App() {
         [
           '새 약속이 열렸어요',
           '',
-          created.className ?? classes.find(
-            (lesson) => lesson.id === created.classId
-          )?.name ?? '',
+          created.className ??
+            classes.find((lesson) => lesson.id === created.classId)?.name ??
+            '',
           created.title,
           `${created.time} · ${created.place}`,
           `현재 ${created.count}/${created.maxPeople}명`,
