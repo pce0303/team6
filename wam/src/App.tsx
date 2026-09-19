@@ -1,4 +1,10 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react'
+import { useCallFunction } from '@channel.io/app-sdk-wam'
+import {
+  TUTORIAL_FUNCTIONS,
+  type SendAsBotInput,
+} from '@tutorial/shared'
+import { useTutorialWamData } from './hooks/useTutorialWamData'
 
 type Tab = '오늘' | '약속' | '마이'
 type Activity = {
@@ -36,6 +42,36 @@ type ActivitiesResponse = {
 }
 
 function App() {
+
+  const { data: wamData } = useTutorialWamData()
+
+  const { call: sendAsBot } = useCallFunction<void>({
+    appId: wamData?.appId ?? '',
+    name: TUTORIAL_FUNCTIONS.sendAsBot,
+  })
+
+  async function sendChannelBotMessage(plainText: string) {
+    if (
+      !wamData ||
+      wamData.chatType !== 'group' ||
+      !wamData.targetToken
+    ) {
+      return
+    }
+
+    const input: SendAsBotInput = {
+      targetToken: wamData.targetToken,
+      broadcast: wamData.broadcast,
+      rootMessageId: wamData.rootMessageId,
+      plainText,
+    }
+
+  try {
+    await sendAsBot(input)
+  } catch {
+    // 봇 메시지 실패 때문에 기존 서비스 기능까지 실패시키지 않는다.
+  }
+}
   const [tab, setTab] = useState<Tab>('오늘')
   const [classes, setClasses] = useState<ClassInfo[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
@@ -191,6 +227,24 @@ function App() {
             : item
         )
       )
+      if (
+        updated.joined &&
+        updated.status === 'confirmed' &&
+        activity.status !== 'confirmed'
+      ) {
+        void sendChannelBotMessage(
+          [
+            '약속이 확정됐어요',
+            '',
+            activity.className ?? '',
+            activity.title,
+            `${activity.time} · ${activity.place}`,
+            `${updated.count}명이 함께해요.`,
+          ]
+            .filter(Boolean)
+            .join('\n')
+        )
+      }
       setNotice(
         !updated.joined
           ? `${activity.title} 참여를 취소했어요.`
@@ -224,6 +278,20 @@ function App() {
       setActivities((current) => [...current, created])
       setShowCreate(false)
       setCreateForm((current) => ({ ...current, title: '', place: '' }))
+      void sendChannelBotMessage(
+        [
+          '새 약속이 열렸어요',
+          '',
+          created.className ?? classes.find(
+            (lesson) => lesson.id === created.classId
+          )?.name ?? '',
+          created.title,
+          `${created.time} · ${created.place}`,
+          `현재 ${created.count}/${created.maxPeople}명`,
+        ]
+          .filter(Boolean)
+          .join('\n')
+      )
       setNotice('약속을 만들었어요.')
     } catch {
       setNotice('약속을 만들지 못했어요. 잠시 후 다시 시도해 주세요.')
