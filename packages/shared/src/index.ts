@@ -66,3 +66,5 @@ export type WriteGroupMessageAsManagerInput = {
     managerId: string;
   };
 };
+
+export * from "./community.js";

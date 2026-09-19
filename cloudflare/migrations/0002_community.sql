@@ -1,0 +1,13 @@
+CREATE TABLE community_users (id TEXT PRIMARY KEY, login TEXT NOT NULL UNIQUE, nickname TEXT NOT NULL, password_hash TEXT NOT NULL, created_at INTEGER NOT NULL);
+CREATE TABLE community_sessions (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES community_users(id), expires_at INTEGER NOT NULL);
+CREATE INDEX community_sessions_expiry ON community_sessions(expires_at);
+CREATE TABLE community_auth_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires_at INTEGER NOT NULL);
+CREATE TABLE community_posts (id TEXT PRIMARY KEY, author_id TEXT NOT NULL REFERENCES community_users(id), date TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL, activity TEXT, time TEXT, place TEXT, status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','closed')), deleted INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL);
+CREATE INDEX community_posts_date ON community_posts(date, deleted, created_at DESC);
+CREATE INDEX community_posts_author ON community_posts(author_id, created_at DESC);
+CREATE TABLE community_comments (id TEXT PRIMARY KEY, post_id TEXT NOT NULL REFERENCES community_posts(id), author_id TEXT NOT NULL REFERENCES community_users(id), body TEXT NOT NULL, created_at INTEGER NOT NULL);
+CREATE INDEX community_comments_post ON community_comments(post_id, created_at);
+CREATE TABLE community_conversations (id TEXT PRIMARY KEY, user_a TEXT NOT NULL REFERENCES community_users(id), user_b TEXT NOT NULL REFERENCES community_users(id), post_id TEXT NOT NULL REFERENCES community_posts(id), created_at INTEGER NOT NULL, UNIQUE(user_a,user_b), CHECK(user_a < user_b));
+CREATE TABLE community_reads (conversation_id TEXT NOT NULL REFERENCES community_conversations(id), user_id TEXT NOT NULL REFERENCES community_users(id), through_id INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(conversation_id,user_id));
+CREATE TABLE community_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, conversation_id TEXT NOT NULL REFERENCES community_conversations(id), sender_id TEXT NOT NULL REFERENCES community_users(id), client_id TEXT NOT NULL, body TEXT NOT NULL, created_at INTEGER NOT NULL, UNIQUE(sender_id,client_id));
+CREATE INDEX community_messages_thread ON community_messages(conversation_id,id);

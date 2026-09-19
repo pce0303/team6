@@ -4,6 +4,8 @@ import { env } from "cloudflare:workers";
 import { withDatabase } from "../server/dist/src/database.js";
 import handler from "../server/dist/src/serverless.js";
 
+import { communityApi } from "../server/dist/src/community.js";
+
 const server = createServer((request, response) => {
   void withDatabase(env.DB, () => handler(request, response)).catch((error) => {
     console.error(
@@ -17,6 +19,8 @@ const server = createServer((request, response) => {
 const http = httpServerHandler(server);
 export default {
   async fetch(request, bindings, context) {
+    if (new URL(request.url).pathname.startsWith("/api/community/"))
+      return communityApi(request, bindings.DB);
     if (
       new URL(request.url).pathname === "/api/ready" &&
       request.method === "GET"
